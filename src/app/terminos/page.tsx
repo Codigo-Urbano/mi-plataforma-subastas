@@ -32,11 +32,11 @@ export default function TerminosPage() {
             <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
               <li>Debes describir el producto con la mayor exactitud posible y subir imágenes reales del mismo.</li>
               <li>
-                <strong>Costo de Publicación:</strong> Cobramos una tarifa inicial para publicar, calculada sobre el precio base de tu producto, con un <strong>mínimo de $2.000 ARS</strong>. El porcentaje disminuye para bienes de alto valor:
+                <strong>Costo de Publicación:</strong> Cobramos una tarifa inicial para publicar, la cual se calcula bajo un modelo escalonado según el precio base de la subasta.
                 <ul className="list-circle pl-5 mt-2 space-y-1">
-                  <li>Hasta $5.000.000: <strong>5%</strong></li>
-                  <li>De $5.000.000 a $20.000.000: <strong>3%</strong></li>
-                  <li>Más de $20.000.000: <strong>2%</strong></li>
+                  <li>El porcentaje de comisión disminuye a medida que el valor del bien es mayor (beneficiando la venta de bienes de alto valor como vehículos o inmuebles).</li>
+                  <li>La comisión exacta en ARS se calculará y mostrará de forma transparente al Vendedor antes de confirmar la publicación en MercadoPago.</li>
+                  <li>Existe un piso de comisión mínima absoluta.</li>
                 </ul>
               </li>
               <li><strong>Duración:</strong> Las subastas no pueden exceder un plazo máximo de 30 días.</li>
@@ -101,3 +101,4 @@ export default function TerminosPage() {
     </div>
   );
 }
+
