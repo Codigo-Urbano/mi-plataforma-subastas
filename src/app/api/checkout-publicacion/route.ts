@@ -100,6 +100,8 @@ export async function GET(req: NextRequest) {
           failure: failureUrl,
           pending: pendingUrl,
         },
+        notification_url: `${baseUrl}/api/webhook/mercadopago`,
+        external_reference: subastaId,
       },
     });
 
