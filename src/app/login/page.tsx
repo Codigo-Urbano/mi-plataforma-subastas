@@ -140,7 +140,7 @@ export default function LoginPage() {
                   type="tel"
                   required
                   className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-                  placeholder="+54 9 11 1234 5678"
+                  placeholder="Ej: +54911... o simplemente 11..."
                 />
               </div>
               {signupError && <p className="text-red-500 text-sm mt-2">{signupError}</p>}
