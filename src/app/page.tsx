@@ -33,67 +33,47 @@ export default async function Home(
 
   const { data: auctions, error } = await query;
 
-  // Formateador de tiempo simple para el MVP
-  const getTiempoRestante = (fechaFin: string) => {
-    const fin = new Date(fechaFin).getTime();
-    const ahora = new Date().getTime();
-    const diferencia = fin - ahora;
-
-    if (diferencia <= 0) return "Finalizada";
-
-    const horas = Math.floor(diferencia / (1000 * 60 * 60));
-    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-    return `${horas}h ${minutos}m`;
-  };
-
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Subastas exclusivas, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-300">
-                resultados en tiempo real.
-              </span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-              Únete a la plataforma más segura para pujar por artículos premium.
-              Tecnología anti-sniper y transacciones protegidas.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="#subastas"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-8 py-3 rounded-lg transition-colors"
-              >
-                Ver Subastas Activas
-              </Link>
-              <Link
-                href="/vender"
-                className="glass hover:bg-white/5 font-medium px-8 py-3 rounded-lg transition-colors border border-border"
-              >
-                Comenzar a Vender
-              </Link>
-            </div>
+      <section className="relative py-24 md:py-40 border-b border-border/40 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background pointer-events-none" />
+        <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 glass text-[11px] uppercase tracking-widest text-muted-foreground mb-8">
+            <span className="flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+            Plataforma Premium
+          </div>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tighter mb-6 text-foreground max-w-4xl leading-[1.05]">
+            Subastas exclusivas, <br className="hidden md:block"/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400 font-light">resultados en tiempo real.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-xl leading-relaxed font-light">
+            Adquiere y vende piezas exclusivas a través de nuestro sistema de pujas de alta precisión. Sin intermediarios, sin latencia.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Link
+              href="#subastas"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-8 py-4 rounded-xl transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center text-sm shadow-[0_0_30px_-5px_rgba(59,130,246,0.4)]"
+            >
+              Explorar Colección
+            </Link>
+            <Link
+              href="/vender"
+              className="glass border border-white/10 text-foreground hover:bg-white/10 font-medium px-8 py-4 rounded-xl transition-colors flex items-center justify-center text-sm"
+            >
+              Publicar Artículo
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Grid de Subastas */}
-      <section id="subastas" className="py-16 container mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <section id="subastas" className="py-24 container mx-auto px-6">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Subastas en Vivo</h2>
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-              </span>
-            </div>
+            <h2 className="text-2xl font-medium tracking-tight mb-8">Selección Actual</h2>
             {/* Categorías */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-x-8 gap-y-4 border-b border-border/40 w-full lg:w-auto pb-4 lg:pb-0 lg:border-b-0">
               {["Todas", "Vehículos", "Inmuebles", "Electrónica", "Hogar", "Arte y Colecciones", "Otros"].map((cat) => {
                 const isActive = (categoria === cat) || (!categoria && cat === "Todas");
                 const href = cat === "Todas" ? `/?orden=${orden || ""}` : `/?categoria=${cat}&orden=${orden || ""}`;
@@ -102,10 +82,10 @@ export default async function Home(
                     key={cat}
                     href={href}
                     scroll={false}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
+                    className={`text-sm pb-2 border-b-2 transition-colors ${
                       isActive 
-                        ? 'bg-primary text-primary-foreground border-primary' 
-                        : 'bg-background text-muted-foreground border-border hover:bg-muted'
+                        ? 'border-foreground text-foreground font-medium' 
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {cat}
@@ -116,29 +96,27 @@ export default async function Home(
           </div>
 
           {/* Ordenar Por */}
-          <div className="flex items-center gap-2 min-w-fit mt-4 md:mt-0">
-            <span className="text-sm font-medium text-muted-foreground">Ordenar:</span>
-            <div className="relative">
+          <div className="flex items-center gap-3 min-w-fit">
+            <span className="text-xs uppercase tracking-widest text-muted-foreground/70">Ordenar</span>
+            <div className="flex items-center gap-4">
               <Link 
                 href={`/?categoria=${categoria || ""}&orden=`}
                 scroll={false}
-                className={`text-sm px-2 ${!orden ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"}`}
+                className={`text-sm ${!orden ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground transition-colors"}`}
               >
                 Recientes
               </Link>
-              <span className="text-border">|</span>
               <Link 
                 href={`/?categoria=${categoria || ""}&orden=precio_bajo`}
                 scroll={false}
-                className={`text-sm px-2 ${orden === "precio_bajo" ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"}`}
+                className={`text-sm ${orden === "precio_bajo" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground transition-colors"}`}
               >
                 Menor Precio
               </Link>
-              <span className="text-border">|</span>
               <Link 
                 href={`/?categoria=${categoria || ""}&orden=precio_alto`}
                 scroll={false}
-                className={`text-sm px-2 ${orden === "precio_alto" ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"}`}
+                className={`text-sm ${orden === "precio_alto" ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground transition-colors"}`}
               >
                 Mayor Precio
               </Link>
@@ -147,20 +125,20 @@ export default async function Home(
         </div>
 
         {!auctions || auctions.length === 0 ? (
-          <div className="glass p-12 text-center rounded-xl border border-border flex flex-col items-center">
-            <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+          <div className="py-32 text-center flex flex-col items-center border border-border/40 border-dashed bg-muted/5">
+            <div className="w-12 h-12 mb-6">
+              <div className="w-full h-full rounded-full border border-border/50 flex items-center justify-center">
+                 <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30"></span>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">No hay subastas activas</h3>
-            <p className="text-muted-foreground mb-6">Sé el primero en vender un producto en nuestra plataforma.</p>
-            <Link href="/vender" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 rounded-lg transition-colors">
-              Crear Subasta
+            <h3 className="text-xl font-medium tracking-tight mb-2">Colección Vacía</h3>
+            <p className="text-muted-foreground font-light mb-8 max-w-sm">No hay piezas listadas en esta categoría en este momento.</p>
+            <Link href="/vender" className="text-sm font-medium border-b border-foreground pb-0.5 hover:text-muted-foreground hover:border-muted-foreground transition-colors">
+              Iniciar listado
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {auctions.map((auction) => (
               <SubastaCard key={auction.id} auction={auction} />
             ))}

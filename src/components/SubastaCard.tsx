@@ -65,42 +65,42 @@ export default function SubastaCard({ auction }: SubastaCardProps) {
   }, [supabase, auction.id]);
 
   return (
-    <div className="glass rounded-xl overflow-hidden hover:border-primary/50 transition-colors group flex flex-col relative">
-      <div className="relative h-64 overflow-hidden bg-muted flex items-center justify-center">
+    <div className="glass rounded-2xl overflow-hidden hover:border-primary/50 transition-colors duration-300 group flex flex-col border border-white/10">
+      <div className="relative h-[320px] overflow-hidden bg-muted/20">
         {auction.imagen_url ? (
           <img
             src={auction.imagen_url}
             alt={auction.titulo}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 saturate-0 group-hover:saturate-100 mix-blend-luminosity group-hover:mix-blend-normal"
           />
         ) : (
-          <span className="text-muted-foreground">Sin imagen</span>
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-xs uppercase tracking-widest font-mono">
+            [ Sin Imagen ]
+          </div>
         )}
-        <div className={`absolute top-4 right-4 backdrop-blur-md px-3 py-1 rounded-full border text-sm font-mono font-medium shadow-xl transition-colors ${isActiva ? 'bg-background/80 border-white/10 text-white' : 'bg-red-500/80 border-red-500 text-white'}`}>
+        <div className={`absolute top-4 right-4 px-3 py-1.5 text-[10px] font-medium tracking-widest uppercase backdrop-blur-md rounded-full border shadow-xl transition-colors ${isActiva ? 'bg-background/80 border-white/10 text-white' : 'bg-red-500/80 border-red-500 text-white'}`}>
           {isActiva ? `⏱ ${tiempoRestanteTexto}` : 'FINALIZADA'}
         </div>
       </div>
-      <div className="p-6 flex-1 flex flex-col">
-        <h3 className="text-lg font-semibold mb-2 line-clamp-2">{auction.titulo}</h3>
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">
-          {auction.descripcion || "Sin descripción"}
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="text-xl font-medium mb-2 tracking-tight text-foreground">{auction.titulo}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-6 font-light leading-relaxed">
+          {auction.descripcion || "Sin descripción detallada."}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-border/50 flex items-end justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Puja actual</p>
-            <p className="text-2xl font-bold text-primary transition-all duration-300">
+        <div className="mt-auto pt-5 border-t border-border/30 flex items-end justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">Puja Actual</span>
+            <span className="text-2xl font-semibold tracking-tighter text-foreground">
               ${Number(precioActual).toLocaleString("es-AR")}
-            </p>
+            </span>
           </div>
-          <div className="text-right">
-            <Link
-              href={`/subastas/${auction.id}`}
-              className="inline-block bg-white text-black text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Ver y Pujar
-            </Link>
-          </div>
+          <Link
+            href={`/subastas/${auction.id}`}
+            className="text-sm font-medium border-b border-transparent hover:border-foreground transition-colors pb-0.5 text-muted-foreground hover:text-foreground"
+          >
+            Participar ↗
+          </Link>
         </div>
       </div>
     </div>
