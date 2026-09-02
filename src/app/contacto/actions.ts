@@ -33,7 +33,7 @@ export async function enviarMensajeContacto(formData: FormData) {
   // 2. Enviar email de notificación al Admin
   try {
     await resend.emails.send({
-      from: 'Plataforma Subastas <onboarding@resend.dev>',
+      from: 'Subastas Pro <notificaciones@subastas-pro.com>',
       to: ['codigo.urbano.solutions@gmail.com'], // Siempre al admin principal
       subject: `[${motivo}] Nuevo mensaje de ${nombre}`,
       html: `

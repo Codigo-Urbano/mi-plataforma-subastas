@@ -111,7 +111,7 @@ async function enviarEmailRecordatorio(emailDestino: string, nombreUsuario: stri
     await resend.emails.send({
       // Resend en su plan gratuito solo permite enviar desde un dominio verificado 
       // o desde 'onboarding@resend.dev' para pruebas
-      from: 'Acme <onboarding@resend.dev>',
+      from: 'Subastas Pro <notificaciones@subastas-pro.com>',
       to: [emailDestino],
       subject: `Por favor califica tu experiencia: ${tituloSubasta}`,
       html: `
