@@ -103,19 +103,6 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1.5" htmlFor="signup-nickname">
-                  Nombre de Usuario Público (Nickname)
-                </label>
-                <input
-                  id="signup-nickname"
-                  name="nickname"
-                  type="text"
-                  required
-                  className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm mb-4"
-                  placeholder="Ej: OfertaMaestra24"
-                />
-              </div>
-              <div>
                 <label className="block text-sm font-medium mb-1.5" htmlFor="signup-password">
                   Contraseña
                 </label>
@@ -158,12 +145,21 @@ export default function LoginPage() {
               </div>
               {signupError && <p className="text-red-500 text-sm mt-2">{signupError}</p>}
               
-              <p className="text-xs text-muted-foreground text-center mt-4 mb-2">
-                Al registrarte, aceptas nuestros{" "}
-                <a href="/terminos" target="_blank" className="text-primary hover:underline font-medium">
-                  Términos y Condiciones
-                </a>
-              </p>
+              <div className="flex items-start gap-2 mt-4 mb-2">
+                <input 
+                  type="checkbox" 
+                  id="terminos" 
+                  name="terminos" 
+                  required 
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                />
+                <label htmlFor="terminos" className="text-xs text-muted-foreground">
+                  Al registrarte, aceptas nuestros{" "}
+                  <a href="/terminos" target="_blank" className="text-primary hover:underline font-medium">
+                    Términos y Condiciones
+                  </a>
+                </label>
+              </div>
 
               <button
                 type="submit"

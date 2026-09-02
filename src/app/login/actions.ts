@@ -29,10 +29,10 @@ export async function signup(formData: FormData) {
   const password = formData.get("password") as string;
   const nombre_completo = formData.get("nombre_completo") as string;
   const telefono = formData.get("telefono") as string;
-  const nickname = formData.get("nickname") as string;
+  const terminos = formData.get("terminos");
 
-  if (!email || !password || !nombre_completo || !telefono || !nickname) {
-    return { error: "Todos los campos son obligatorios" };
+  if (!email || !password || !nombre_completo || !telefono || !terminos) {
+    return { error: "Todos los campos son obligatorios y debes aceptar los términos" };
   }
 
   const { data, error } = await supabase.auth.signUp({
@@ -42,7 +42,6 @@ export async function signup(formData: FormData) {
       data: {
         nombre_completo,
         telefono,
-        nickname,
       },
     },
   });
