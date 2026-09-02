@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -7,6 +8,41 @@ import BotonCompartir from "@/components/BotonCompartir";
 import { obtenerPromedioCalificacion } from "./actions";
 
 export const revalidate = 0;
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: auction } = await supabase
+    .from("subastas")
+    .select("titulo, descripcion, imagen_url")
+    .eq("id", id)
+    .single();
+
+  if (!auction) {
+    return { title: 'Subasta no encontrada' };
+  }
+
+  const title = `¡Mira esta subasta: ${auction.titulo}!`;
+  const description = auction.descripcion ? auction.descripcion.substring(0, 150) + "..." : "Ingresa para ver el precio actual y participar en la puja.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: auction.imagen_url ? [{ url: auction.imagen_url, width: 800, height: 600, alt: auction.titulo }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: auction.imagen_url ? [auction.imagen_url] : [],
+    }
+  };
+}
 
 export default async function SubastaDetallePage({
   params,
