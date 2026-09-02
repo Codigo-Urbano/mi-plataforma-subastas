@@ -12,10 +12,10 @@ export default function LoginPage() {
     null
   );
 
-  const [signupError, signupAction, isSignupPending] = useActionState(
+  const [signupState, signupAction, isSignupPending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const result = await signup(formData);
-      return result?.error || null;
+      return result;
     },
     null
   );
@@ -87,92 +87,110 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Signup Form */}
-            <form action={signupAction} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5" htmlFor="signup-email">
-                  Correo electrónico
-                </label>
-                <input
-                  id="signup-email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-                  placeholder="tu@email.com"
-                />
+            {/* Signup Section */}
+            {signupState?.success ? (
+              <div className="text-center p-6 bg-green-500/10 border border-green-500/20 rounded-xl animate-in fade-in zoom-in duration-300">
+                <div className="w-12 h-12 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="font-bold text-lg mb-2">¡Casi listo!</h3>
+                <p className="text-sm text-green-600/80 mb-4">{signupState.message}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="text-primary text-sm font-medium hover:underline"
+                >
+                  Volver al inicio de sesión
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5" htmlFor="signup-password">
-                  Contraseña
-                </label>
-                <input
-                  id="signup-password"
-                  name="password"
-                  type="password"
-                  required
-                  className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-                  placeholder="Mínimo 6 caracteres"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1.5" htmlFor="signup-nombre">
-                  Nombre Completo
-                </label>
-                <input
-                  id="signup-nombre"
-                  name="nombre_completo"
-                  type="text"
-                  required
-                  className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-                  placeholder="Ej: Juan Pérez"
-                />
-              </div>
+            ) : (
+              <form action={signupAction} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" htmlFor="signup-email">
+                    Correo electrónico
+                  </label>
+                  <input
+                    id="signup-email"
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+                    placeholder="tu@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" htmlFor="signup-password">
+                    Contraseña
+                  </label>
+                  <input
+                    id="signup-password"
+                    name="password"
+                    type="password"
+                    required
+                    className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+                    placeholder="Mínimo 6 caracteres"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" htmlFor="signup-nombre">
+                    Nombre Completo
+                  </label>
+                  <input
+                    id="signup-nombre"
+                    name="nombre_completo"
+                    type="text"
+                    required
+                    className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+                    placeholder="Ej: Juan Pérez"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1.5" htmlFor="signup-telefono">
-                  Teléfono (WhatsApp)
-                </label>
-                <input
-                  id="signup-telefono"
-                  name="telefono"
-                  type="tel"
-                  required
-                  className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-                  placeholder="Ej: +54911... o simplemente 11..."
-                />
-              </div>
-              {signupError && <p className="text-red-500 text-sm mt-2">{signupError}</p>}
-              
-              <div className="flex items-start gap-2 mt-4 mb-2">
-                <input 
-                  type="checkbox" 
-                  id="terminos" 
-                  name="terminos" 
-                  required 
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                />
-                <label htmlFor="terminos" className="text-xs text-muted-foreground">
-                  Al registrarte, aceptas nuestros{" "}
-                  <a href="/terminos" target="_blank" className="text-primary hover:underline font-medium">
-                    Términos y Condiciones
-                  </a>
-                </label>
-              </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" htmlFor="signup-telefono">
+                    Teléfono (WhatsApp)
+                  </label>
+                  <input
+                    id="signup-telefono"
+                    name="telefono"
+                    type="tel"
+                    required
+                    className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+                    placeholder="Ej: +54911... o simplemente 11..."
+                  />
+                </div>
+                {signupState?.error && <p className="text-red-500 text-sm mt-2">{signupState.error}</p>}
+                
+                <div className="flex items-start gap-2 mt-4 mb-2">
+                  <input 
+                    type="checkbox" 
+                    id="terminos" 
+                    name="terminos" 
+                    required 
+                    className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  />
+                  <label htmlFor="terminos" className="text-xs text-muted-foreground">
+                    Al registrarte, aceptas nuestros{" "}
+                    <a href="/terminos" target="_blank" className="text-primary hover:underline font-medium">
+                      Términos y Condiciones
+                    </a>
+                  </label>
+                </div>
 
-              <button
-                type="submit"
-                disabled={isSignupPending}
-                className="w-full bg-transparent hover:bg-white/5 text-foreground border border-border font-medium py-2 px-4 rounded-lg transition-colors flex justify-center items-center"
-              >
-                {isSignupPending ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  "Registrarse"
-                )}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={isSignupPending}
+                  className="w-full bg-transparent hover:bg-white/5 text-foreground border border-border font-medium py-2 px-4 rounded-lg transition-colors flex justify-center items-center"
+                >
+                  {isSignupPending ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    "Registrarse"
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>

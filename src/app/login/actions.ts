@@ -50,6 +50,10 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  // Verificar si se requiere confirmación de email (la sesión suele venir nula en ese caso)
+  if (data?.user && data.user.identities && data.user.identities.length === 0) {
+    return { error: "Este correo electrónico ya está registrado." };
+  }
+
+  return { success: true, message: "¡Registro exitoso! Por favor revisa tu bandeja de entrada o carpeta de spam para confirmar tu correo electrónico." };
 }
