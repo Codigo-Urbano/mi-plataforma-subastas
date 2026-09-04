@@ -201,7 +201,7 @@ export default function AdminDashboard() {
                 <input
                   type="number"
                   name="comision_minima"
-                  defaultValue={configuracion?.comision_minima || 2000}
+                  defaultValue={configuracion?.comision_minima ?? 2000}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                   min="0"
                   required
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                   <input
                     type="number"
                     name="escala_1_tope"
-                    defaultValue={configuracion?.escala_1_tope || 5000000}
+                    defaultValue={configuracion?.escala_1_tope ?? 5000000}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                     min="0"
                     required
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                     type="number"
                     name="escala_1_porcentaje"
                     step="0.01"
-                    defaultValue={(configuracion?.escala_1_porcentaje || 0.05) * 100}
+                    defaultValue={(configuracion?.escala_1_porcentaje ?? 0.05) * 100}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                     min="0"
                     required
@@ -246,7 +246,7 @@ export default function AdminDashboard() {
                   <input
                     type="number"
                     name="escala_2_tope"
-                    defaultValue={configuracion?.escala_2_tope || 20000000}
+                    defaultValue={configuracion?.escala_2_tope ?? 20000000}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                     required
                   />
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                     type="number"
                     name="escala_2_porcentaje"
                     step="0.01"
-                    defaultValue={(configuracion?.escala_2_porcentaje || 0.03) * 100}
+                    defaultValue={(configuracion?.escala_2_porcentaje ?? 0.03) * 100}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                     required
                   />
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
                     type="number"
                     name="escala_3_porcentaje"
                     step="0.01"
-                    defaultValue={(configuracion?.escala_3_porcentaje || 0.02) * 100}
+                    defaultValue={(configuracion?.escala_3_porcentaje ?? 0.02) * 100}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
                     required
                   />
