@@ -203,6 +203,7 @@ export default function AdminDashboard() {
                   name="comision_minima"
                   defaultValue={configuracion?.comision_minima || 2000}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                  min="0"
                   required
                 />
               </div>
@@ -218,6 +219,7 @@ export default function AdminDashboard() {
                     name="escala_1_tope"
                     defaultValue={configuracion?.escala_1_tope || 5000000}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                    min="0"
                     required
                   />
                 </div>
@@ -229,6 +231,7 @@ export default function AdminDashboard() {
                     step="0.01"
                     defaultValue={(configuracion?.escala_1_porcentaje || 0.05) * 100}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                    min="0"
                     required
                   />
                 </div>
