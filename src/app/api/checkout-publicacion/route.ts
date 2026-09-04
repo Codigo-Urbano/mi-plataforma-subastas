@@ -66,13 +66,6 @@ export async function GET(req: NextRequest) {
     // El cobro mínimo absoluto
     costoPublicacion = Math.max(costoPublicacion, Number(config.comision_minima));
 
-    // 5. Configurar MercadoPago
-    const client = new MercadoPagoConfig({
-      accessToken: process.env.MP_ACCESS_TOKEN || "",
-    });
-
-    const preference = new Preference(client);
-    
     // Forzamos localhost si no hay una URL de entorno válida para evitar que NextJS asigne "null"
     let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     if (!baseUrl || !baseUrl.startsWith("http")) {
@@ -82,6 +75,32 @@ export async function GET(req: NextRequest) {
     const successUrl = `${baseUrl}/vender/success?subastaId=${subastaId}`;
     const failureUrl = `${baseUrl}/vender/error`;
     const pendingUrl = `${baseUrl}/vender/success?subastaId=${subastaId}`;
+
+    // SI EL COSTO ES CERO (Freemium): Activamos inmediatamente sin pasar por MercadoPago
+    if (costoPublicacion === 0) {
+      console.log(`Subasta ${subastaId} es gratuita (Freemium). Activando directamente.`);
+      const { createAdminClient } = await import("@/utils/supabase/admin");
+      const supabaseAdmin = createAdminClient();
+      
+      const { error: updateError } = await supabaseAdmin
+        .from("subastas")
+        .update({ estado: "activa" })
+        .eq("id", subastaId);
+
+      if (updateError) {
+        console.error("Error activando subasta gratuita:", updateError);
+        return NextResponse.json({ error: "Error interno al activar subasta gratuita" }, { status: 500 });
+      }
+
+      return NextResponse.redirect(successUrl);
+    }
+
+    // 5. Configurar MercadoPago (Solo si cuesta más de $0)
+    const client = new MercadoPagoConfig({
+      accessToken: process.env.MP_ACCESS_TOKEN || "",
+    });
+
+    const preference = new Preference(client);
     
     console.log("URLs generadas para MP:", { successUrl, failureUrl, pendingUrl });
 
