@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { Resend } from "resend";
 
 export async function pujar(subastaId: string, formData: FormData) {
   const supabase = await createClient();
@@ -15,7 +16,7 @@ export async function pujar(subastaId: string, formData: FormData) {
   }
 
   // Verificar si está suspendido
-  const { data: perfil } = await supabase.from("perfiles").select("estado").eq("id", user.id).single();
+  const { data: perfil } = await supabase.from("perfiles").select("estado, nombre_completo").eq("id", user.id).single();
   if (perfil?.estado === "suspendido") {
     return { error: "Tu cuenta se encuentra suspendida. No puedes realizar pujas." };
   }
@@ -26,6 +27,15 @@ export async function pujar(subastaId: string, formData: FormData) {
     return { error: "Monto inválido." };
   }
 
+  // Obtener al pujador más alto ANTES de procesar esta nueva puja
+  const { data: previousBid } = await supabase
+    .from("pujas")
+    .select("comprador_id, perfiles(email, nombre_completo)")
+    .eq("subasta_id", subastaId)
+    .order("monto", { ascending: false })
+    .limit(1)
+    .single();
+
   // Llamar a nuestra función segura RPC creada en SQL
   const { error } = await supabase.rpc("procesar_puja", {
     p_subasta_id: subastaId,
@@ -35,6 +45,42 @@ export async function pujar(subastaId: string, formData: FormData) {
   if (error) {
     console.error("Error al pujar:", error);
     return { error: error.message || "No se pudo procesar la puja." };
+  }
+
+  // SI LA PUJA FUE EXITOSA: Enviar email al usuario que fue superado (si existe y no somos nosotros mismos)
+  if (previousBid && previousBid.comprador_id !== user.id) {
+    try {
+      // Obtener el título de la subasta para el correo
+      const { data: subasta } = await supabase.from("subastas").select("titulo").eq("id", subastaId).single();
+      
+      if (subasta && process.env.RESEND_API_KEY) {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const emailAnterior = (previousBid.perfiles as any).email;
+        const nombreAnterior = (previousBid.perfiles as any).nombre_completo || "Usuario";
+        
+        await resend.emails.send({
+          from: 'Subastas Pro <notificaciones@subastas-pro.com>',
+          to: [emailAnterior],
+          subject: `¡Han superado tu oferta en: ${subasta.titulo}!`,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eaeaeb; border-radius: 10px;">
+              <h2 style="color: #d32f2f;">¡Te han superado!</h2>
+              <p style="color: #555; line-height: 1.5;">Hola ${nombreAnterior},</p>
+              <p style="color: #555; line-height: 1.5;">Alguien acaba de hacer una oferta mayor a la tuya en la subasta <strong>"${subasta.titulo}"</strong>.</p>
+              <p style="color: #555; line-height: 1.5;">El nuevo precio actual es de <strong>$${monto.toLocaleString("es-AR")}</strong>.</p>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${process.env.NEXT_PUBLIC_BASE_URL}/subastas/${subastaId}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                  Pujar de nuevo y recuperar el liderazgo
+                </a>
+              </div>
+            </div>
+          `
+        });
+      }
+    } catch (e) {
+      console.error("Error enviando email de puja superada:", e);
+    }
   }
 
   revalidatePath(`/subastas/${subastaId}`);

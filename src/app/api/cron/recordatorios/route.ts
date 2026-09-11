@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     const { data: subastasFinalizadas, error: errSubastas } = await supabase
       .from("subastas")
       .select("id, titulo, vendedor_id, fecha_fin")
-      .eq("estado", "activa")
+      .eq("estado", "finalizada")
       .lt("fecha_fin", new Date().toISOString());
 
     if (errSubastas || !subastasFinalizadas) {
