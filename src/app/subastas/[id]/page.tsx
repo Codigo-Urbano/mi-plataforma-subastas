@@ -8,6 +8,7 @@ import BotonCompartir from "@/components/BotonCompartir";
 import BotonFavorito from "@/components/BotonFavorito";
 import GaleriaImagenes from "./GaleriaImagenes";
 import PreguntasRespuestas from "./PreguntasRespuestas";
+import TrackerVista from "./TrackerVista";
 import { obtenerPromedioCalificacion } from "./actions";
 import { obtenerIdsFavoritos } from "@/app/favoritos/actions";
 
@@ -103,6 +104,7 @@ export default async function SubastaDetallePage({
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <TrackerVista subastaId={auction.id} />
       <Link href="/" className="text-sm text-primary hover:underline mb-8 inline-flex items-center gap-2">
         &larr; Volver al inicio
       </Link>
