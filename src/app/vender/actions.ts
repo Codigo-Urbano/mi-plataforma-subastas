@@ -27,7 +27,8 @@ export async function createAuction(formData: FormData) {
   const precio_base = parseFloat(formData.get("precio_base") as string);
   const fecha_fin = formData.get("fecha_fin") as string;
   const anti_sniper = formData.get("anti_sniper") === "on";
-  const imagen = formData.get("imagen") as File | null;
+  const imagenes = formData.getAll("imagen") as File[];
+  const validImagenes = imagenes.filter(img => img.size > 0).slice(0, 5); // Máximo 5 imágenes
 
   if (!titulo || !categoria || isNaN(precio_base) || !fecha_fin) {
     return { error: "Faltan campos obligatorios." };
@@ -41,9 +42,10 @@ export async function createAuction(formData: FormData) {
     return { error: "La subasta no puede exceder el límite máximo de 30 días." };
   }
 
-  let imagen_url = null;
+  let imagenesUrls: string[] = [];
+  let imagen_url = null; // Para retrocompatibilidad
 
-  if (imagen && imagen.size > 0) {
+  for (const imagen of validImagenes) {
     const fileExt = imagen.name.split(".").pop();
     const fileName = `${Date.now()}-${Math.random()
       .toString(36)
@@ -55,14 +57,18 @@ export async function createAuction(formData: FormData) {
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
-      return { error: "Error al subir la imagen del producto." };
+      return { error: "Error al subir una de las imágenes." };
     }
 
     const { data: publicUrlData } = supabase.storage
       .from("productos")
       .getPublicUrl(fileName);
 
-    imagen_url = publicUrlData.publicUrl;
+    imagenesUrls.push(publicUrlData.publicUrl);
+  }
+
+  if (imagenesUrls.length > 0) {
+    imagen_url = imagenesUrls[0]; // La primera es la principal para código viejo
   }
 
   const { data, error: insertError } = await supabase.from("subastas").insert([
@@ -75,7 +81,8 @@ export async function createAuction(formData: FormData) {
       precio_actual: precio_base,
       fecha_fin: new Date(fecha_fin).toISOString(),
       anti_sniper,
-      imagen_url,
+      imagen_url, // Legacy
+      imagenes: imagenesUrls, // Nuevo array
       estado: "pendiente_pago",
     },
   ]).select().single();

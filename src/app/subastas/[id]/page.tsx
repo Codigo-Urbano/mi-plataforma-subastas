@@ -6,6 +6,7 @@ import ConsolaPuja from "./ConsolaPuja";
 import Estrellas from "@/components/Estrellas";
 import BotonCompartir from "@/components/BotonCompartir";
 import BotonFavorito from "@/components/BotonFavorito";
+import GaleriaImagenes from "./GaleriaImagenes";
 import PreguntasRespuestas from "./PreguntasRespuestas";
 import { obtenerPromedioCalificacion } from "./actions";
 import { obtenerIdsFavoritos } from "@/app/favoritos/actions";
@@ -19,7 +20,7 @@ export async function generateMetadata(
   const supabase = await createClient();
   const { data: auction } = await supabase
     .from("subastas")
-    .select("titulo, descripcion, imagen_url")
+    .select("titulo, descripcion, imagen_url, imagenes")
     .eq("id", id)
     .single();
 
@@ -29,6 +30,7 @@ export async function generateMetadata(
 
   const title = `¡Mira esta subasta: ${auction.titulo}!`;
   const description = auction.descripcion ? auction.descripcion.substring(0, 150) + "..." : "Ingresa para ver el precio actual y participar en la puja.";
+  const mainImage = (auction.imagenes && auction.imagenes.length > 0) ? auction.imagenes[0] : auction.imagen_url;
 
   return {
     title,
@@ -36,13 +38,13 @@ export async function generateMetadata(
     openGraph: {
       title,
       description,
-      images: auction.imagen_url ? [{ url: auction.imagen_url, width: 800, height: 600, alt: auction.titulo }] : [],
+      images: mainImage ? [{ url: mainImage, width: 800, height: 600, alt: auction.titulo }] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: auction.imagen_url ? [auction.imagen_url] : [],
+      images: mainImage ? [mainImage] : [],
     }
   };
 }
@@ -106,18 +108,10 @@ export default async function SubastaDetallePage({
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6">
-        {/* Lado Izquierdo: Imagen */}
+        {/* Lado Izquierdo: Galería de Imágenes */}
         <div className="rounded-2xl overflow-hidden glass border border-border bg-muted flex items-center justify-center min-h-[400px] relative">
           <BotonFavorito subastaId={auction.id} initialIsFavorito={misFavoritos.includes(auction.id)} currentPath={`/subastas/${auction.id}`} />
-          {auction.imagen_url ? (
-            <img
-              src={auction.imagen_url}
-              alt={auction.titulo}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-muted-foreground">Sin foto del producto</span>
-          )}
+          <GaleriaImagenes imagenes={auction.imagenes || (auction.imagen_url ? [auction.imagen_url] : [])} />
         </div>
 
         {/* Lado Derecho: Detalles y Pujas */}

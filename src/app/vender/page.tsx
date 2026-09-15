@@ -21,14 +21,21 @@ export default function VenderPage() {
     null
   );
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files || []);
+    // Limitar a máximo 5 fotos
+    const limitedFiles = files.slice(0, 5);
+    
+    // Revocar URLs viejas para evitar memory leaks
+    imagePreviews.forEach(url => URL.revokeObjectURL(url));
+    
+    if (limitedFiles.length > 0) {
+      const urls = limitedFiles.map(file => URL.createObjectURL(file));
+      setImagePreviews(urls);
     } else {
-      setImagePreview(null);
+      setImagePreviews([]);
     }
   };
 
@@ -36,7 +43,7 @@ export default function VenderPage() {
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Crear Nueva Subasta</h1>
       <p className="text-muted-foreground mb-8">
-        Sube una foto de tu producto, establece un precio base y deja que comience la puja.
+        Sube hasta 5 fotos de tu producto, establece un precio base y deja que comience la puja.
       </p>
 
       <div className="glass p-6 md:p-8 rounded-xl border border-border">
@@ -142,33 +149,38 @@ export default function VenderPage() {
             {/* Columna Derecha: Imagen */}
             <div className="space-y-4">
               <label className="block text-sm font-medium mb-1.5">
-                Foto del Producto *
+                Fotos del Producto (Máx 5) *
               </label>
-              <div className="relative border-2 border-dashed border-border rounded-xl h-64 flex flex-col items-center justify-center bg-background/30 overflow-hidden hover:bg-background/50 transition-colors cursor-pointer group">
+              <div className="relative border-2 border-dashed border-border rounded-xl min-h-[16rem] p-4 flex flex-col items-center justify-center bg-background/30 hover:bg-background/50 transition-colors cursor-pointer group">
                 <input
                   type="file"
                   name="imagen"
                   accept="image/png, image/jpeg, image/webp"
+                  multiple
                   required
                   onChange={handleImageChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
+                
+                {imagePreviews.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2 w-full h-full">
+                    {imagePreviews.map((url, i) => (
+                      <div key={i} className={`relative rounded-lg overflow-hidden border border-white/10 ${i === 0 && imagePreviews.length % 2 !== 0 ? 'col-span-2 aspect-video' : 'aspect-square'}`}>
+                        <img src={url} alt={`Preview ${i+1}`} className="w-full h-full object-cover" />
+                        {i === 0 && <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">Principal</span>}
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="text-center p-4">
                     <svg className="mx-auto h-12 w-12 text-muted-foreground group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Haz clic para subir una foto
+                      Haz clic o arrastra hasta 5 fotos
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      PNG, JPG o WEBP (Máx. 5MB)
+                      La primera foto será la principal
                     </p>
                   </div>
                 )}
