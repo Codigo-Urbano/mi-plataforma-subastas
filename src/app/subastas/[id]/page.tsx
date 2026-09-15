@@ -6,6 +6,7 @@ import ConsolaPuja from "./ConsolaPuja";
 import Estrellas from "@/components/Estrellas";
 import BotonCompartir from "@/components/BotonCompartir";
 import BotonFavorito from "@/components/BotonFavorito";
+import PreguntasRespuestas from "./PreguntasRespuestas";
 import { obtenerPromedioCalificacion } from "./actions";
 import { obtenerIdsFavoritos } from "@/app/favoritos/actions";
 
@@ -64,6 +65,13 @@ export default async function SubastaDetallePage({
   if (error || !auction) {
     notFound();
   }
+
+  // Obtener las preguntas
+  const { data: preguntas } = await supabase
+    .from("preguntas")
+    .select("*, perfiles!preguntas_comprador_id_fkey(nickname, email)")
+    .eq("subasta_id", id)
+    .order("creado_en", { ascending: true });
 
   // Obtener reputación del vendedor
   const reputacionVendedor = await obtenerPromedioCalificacion(auction.vendedor_id);
@@ -149,6 +157,15 @@ export default async function SubastaDetallePage({
           </div>
         </div>
       </div>
+
+      {/* Sección de Preguntas y Respuestas (Debajo de todo el contenido principal) */}
+      <PreguntasRespuestas 
+        subastaId={auction.id}
+        preguntas={preguntas || []}
+        isOwner={isOwner}
+        isLoggedIn={!!user}
+        isActiva={isActiva}
+      />
     </div>
   );
 }
