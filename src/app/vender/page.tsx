@@ -39,6 +39,19 @@ export default function VenderPage() {
     }
   };
 
+  const [minDate, setMinDate] = useState("");
+  const [maxDate, setMaxDate] = useState("");
+  const [tzOffset, setTzOffset] = useState(0);
+
+  useEffect(() => {
+    const offset = new Date().getTimezoneOffset();
+    setTzOffset(offset);
+    const nowLocal = new Date(Date.now() - offset * 60000).toISOString().slice(0, 16);
+    const maxLocal = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000 - offset * 60000).toISOString().slice(0, 16);
+    setMinDate(nowLocal);
+    setMaxDate(maxLocal);
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Crear Nueva Subasta</h1>
@@ -122,10 +135,11 @@ export default function VenderPage() {
                     name="fecha_fin"
                     type="datetime-local"
                     required
-                    min={new Date().toISOString().slice(0, 16)}
-                    max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
+                    min={minDate}
+                    max={maxDate}
                     className="w-full px-4 py-2 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
                   />
+                  <input type="hidden" name="tz_offset" value={tzOffset} />
                 </div>
               </div>
 

@@ -30,15 +30,30 @@ export async function createAuction(formData: FormData) {
   const imagenes = formData.getAll("imagen") as File[];
   const validImagenes = imagenes.filter(img => img.size > 0).slice(0, 5); // Máximo 5 imágenes
 
-  if (!titulo || !categoria || isNaN(precio_base) || !fecha_fin) {
+  // Parsing de la fecha con compensación de zona horaria del cliente
+  const fechaFinString = formData.get("fecha_fin") as string;
+  const tzOffset = parseInt(formData.get("tz_offset") as string) || 0; // en minutos
+  
+  // Date trata la string "YYYY-MM-DDThh:mm" como local (del servidor)
+  // Para evitar problemas, la parseamos explicitamente como UTC y luego restamos el offset del cliente
+  const [datePart, timePart] = fechaFinString.split("T");
+  const isoString = `${datePart}T${timePart}:00.000Z`;
+  const parsedUtcMs = new Date(isoString).getTime();
+  
+  // El cliente nos mandó su hora local, pero la parseamos como si fuera UTC.
+  // Por ej. mandó 15:00 ARG (tz = 180). parseó 15:00 UTC. 
+  // La verdadera hora UTC es 15:00 + 3 horas = 18:00 UTC.
+  const trueUtcMs = parsedUtcMs + (tzOffset * 60000);
+  const fecha_fin_iso = new Date(trueUtcMs).toISOString();
+
+  if (!titulo || !categoria || isNaN(precio_base) || !fechaFinString) {
     return { error: "Faltan campos obligatorios." };
   }
 
   // Validación Fuerte: La subasta no puede durar más de 30 días
   const limiteMaximoMs = Date.now() + (30 * 24 * 60 * 60 * 1000);
-  const fechaIngresadaMs = new Date(fecha_fin).getTime();
 
-  if (fechaIngresadaMs > limiteMaximoMs) {
+  if (trueUtcMs > limiteMaximoMs) {
     return { error: "La subasta no puede exceder el límite máximo de 30 días." };
   }
 
@@ -79,7 +94,7 @@ export async function createAuction(formData: FormData) {
       descripcion,
       precio_base,
       precio_actual: precio_base,
-      fecha_fin: new Date(fecha_fin).toISOString(),
+      fecha_fin: fecha_fin_iso,
       anti_sniper,
       imagen_url, // Legacy
       imagenes: imagenesUrls, // Nuevo array

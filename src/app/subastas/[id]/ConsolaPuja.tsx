@@ -31,6 +31,14 @@ export default function ConsolaPuja({
 
   const supabase = createClient();
 
+  const [infoContacto, setInfoContacto] = useState<any>(null);
+
+  // Sincronizar estado cuando cambian las props por navegación en Next.js
+  useEffect(() => {
+    setPrecioActual(initialPrecioActual);
+    setFechaFin(initialFechaFin);
+  }, [initialPrecioActual, initialFechaFin]);
+
   // Action hook para manejar el submit
   const [error, formAction, isPending] = useActionState(
     async (prevState: any, formData: FormData) => {

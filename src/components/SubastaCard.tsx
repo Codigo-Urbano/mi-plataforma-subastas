@@ -18,6 +18,13 @@ export default function SubastaCard({ auction, isFavorito = false, currentPath =
   const [isActiva, setIsActiva] = useState(auction.estado === "activa");
   const supabase = createClient();
 
+  // Sincronizar props con el estado interno en caso de que Next.js reutilice el componente
+  useEffect(() => {
+    setPrecioActual(auction.precio_actual);
+    setFechaFin(auction.fecha_fin);
+    setIsActiva(auction.estado === "activa");
+  }, [auction]);
+
   useEffect(() => {
     const calcularTiempo = () => {
       const fin = new Date(fechaFin).getTime();
