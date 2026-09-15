@@ -119,10 +119,20 @@ export default async function SubastaDetallePage({
           {/* Título y Compartir */}
           <div className="flex justify-between items-start mb-6 gap-4">
             <h1 className="text-3xl font-bold">{auction.titulo}</h1>
-            <BotonCompartir 
-              url={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://subastas-pro.com'}/subastas/${auction.id}`} 
-              titulo={auction.titulo} 
-            />
+            <div className="flex items-center gap-2">
+              {isOwner && (
+                <Link 
+                  href={`/subastas/${auction.id}/editar`}
+                  className="px-4 py-2 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
+                >
+                  Editar
+                </Link>
+              )}
+              <BotonCompartir 
+                url={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://subastas-pro.com'}/subastas/${auction.id}`} 
+                titulo={auction.titulo} 
+              />
+            </div>
           </div>
 
           {/* Consola de Puja en Tiempo Real */}
