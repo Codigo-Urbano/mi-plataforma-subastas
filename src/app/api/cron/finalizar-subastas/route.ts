@@ -1,15 +1,22 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  // Extraemos la URL para leer parámetros
+  const url = new URL(request.url);
+  const secretQuery = url.searchParams.get("secret");
+  
   const authHeader = request.headers.get("authorization");
-  if (
-    process.env.NODE_ENV === "production" &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  
+  // Aceptamos la contraseña ya sea por el Header "Authorization: Bearer ..." o por la URL "?secret=..."
+  const isValidAuth = 
+    authHeader === `Bearer ${process.env.CRON_SECRET}` || 
+    secretQuery === process.env.CRON_SECRET;
+
+  if (process.env.NODE_ENV === "production" && !isValidAuth) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
