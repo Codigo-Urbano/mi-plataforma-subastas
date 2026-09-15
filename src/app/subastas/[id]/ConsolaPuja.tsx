@@ -49,6 +49,8 @@ export default function ConsolaPuja({
       return null;
     },
     null
+  );
+
   // Lógica de cuenta regresiva
   useEffect(() => {
     const calcularTiempo = () => {

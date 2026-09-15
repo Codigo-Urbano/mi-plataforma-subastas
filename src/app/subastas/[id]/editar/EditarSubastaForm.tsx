@@ -119,7 +119,7 @@ export default function EditarSubastaForm({ subasta, tienePujas }: { subasta: an
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm mt-4 p-3 bg-red-500/10 rounded-lg border border-red-500/20">{error}</p>}
+          {error?.error && <p className="text-red-500 text-sm mt-4 p-3 bg-red-500/10 rounded-lg border border-red-500/20">{error.error}</p>}
 
           <div className="pt-4 border-t border-border/50 flex justify-end">
             <button type="submit" disabled={isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-8 rounded-lg transition-colors flex items-center justify-center min-w-[200px]">
