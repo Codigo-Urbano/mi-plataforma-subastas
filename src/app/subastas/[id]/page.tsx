@@ -5,7 +5,9 @@ import Link from "next/link";
 import ConsolaPuja from "./ConsolaPuja";
 import Estrellas from "@/components/Estrellas";
 import BotonCompartir from "@/components/BotonCompartir";
+import BotonFavorito from "@/components/BotonFavorito";
 import { obtenerPromedioCalificacion } from "./actions";
+import { obtenerIdsFavoritos } from "@/app/favoritos/actions";
 
 export const revalidate = 0;
 
@@ -71,6 +73,8 @@ export default async function SubastaDetallePage({
     data: { user },
   } = await supabase.auth.getUser();
 
+  const misFavoritos = await obtenerIdsFavoritos();
+
   // Formateador
   const getTiempoRestante = (fechaFin: string) => {
     const fin = new Date(fechaFin).getTime();
@@ -95,7 +99,8 @@ export default async function SubastaDetallePage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-6">
         {/* Lado Izquierdo: Imagen */}
-        <div className="rounded-2xl overflow-hidden glass border border-border bg-muted flex items-center justify-center min-h-[400px]">
+        <div className="rounded-2xl overflow-hidden glass border border-border bg-muted flex items-center justify-center min-h-[400px] relative">
+          <BotonFavorito subastaId={auction.id} initialIsFavorito={misFavoritos.includes(auction.id)} currentPath={`/subastas/${auction.id}`} />
           {auction.imagen_url ? (
             <img
               src={auction.imagen_url}
@@ -113,7 +118,7 @@ export default async function SubastaDetallePage({
           <div className="flex justify-between items-start mb-6 gap-4">
             <h1 className="text-3xl font-bold">{auction.titulo}</h1>
             <BotonCompartir 
-              url={`${process.env.NEXT_PUBLIC_BASE_URL}/subastas/${auction.id}`} 
+              url={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://subastas-pro.com'}/subastas/${auction.id}`} 
               titulo={auction.titulo} 
             />
           </div>

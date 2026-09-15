@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import BotonFavorito from "./BotonFavorito";
 
 type SubastaCardProps = {
   auction: any;
+  isFavorito?: boolean;
+  currentPath?: string;
 };
 
-export default function SubastaCard({ auction }: SubastaCardProps) {
+export default function SubastaCard({ auction, isFavorito = false, currentPath = "/" }: SubastaCardProps) {
   const [precioActual, setPrecioActual] = useState(auction.precio_actual);
   const [fechaFin, setFechaFin] = useState(auction.fecha_fin);
   const [tiempoRestanteTexto, setTiempoRestanteTexto] = useState("");
@@ -78,6 +81,10 @@ export default function SubastaCard({ auction }: SubastaCardProps) {
             [ Sin Imagen ]
           </div>
         )}
+        
+        {/* Boton de favoritos */}
+        <BotonFavorito subastaId={auction.id} initialIsFavorito={isFavorito} currentPath={currentPath} />
+
         <div className={`absolute top-4 right-4 px-3 py-1.5 text-[10px] font-medium tracking-widest uppercase backdrop-blur-md rounded-full border shadow-xl transition-colors ${isActiva ? 'bg-background/80 border-white/10 text-white' : 'bg-red-500/80 border-red-500 text-white'}`}>
           {isActiva ? `⏱ ${tiempoRestanteTexto}` : 'FINALIZADA'}
         </div>

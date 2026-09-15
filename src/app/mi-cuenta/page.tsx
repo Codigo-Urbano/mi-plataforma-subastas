@@ -70,6 +70,16 @@ export default async function MiCuentaPage() {
     }
   }
 
+  // 5. Obtener Mis Favoritos
+  const { data: favoritosData } = await supabase
+    .from("favoritos")
+    .select("subasta_id, subastas(*)")
+    .eq("usuario_id", user.id)
+    .order("creado_en", { ascending: false });
+  
+  // Extraer las subastas del join (subastas puede ser array o un solo objeto dependiendo del setup, como es FK a id único es un objeto)
+  const misFavoritos = favoritosData?.map(f => f.subastas).filter(Boolean) || [];
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       <Link href="/" className="text-sm text-primary hover:underline mb-8 inline-flex items-center gap-2">
@@ -144,6 +154,36 @@ export default async function MiCuentaPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Fila: Mis Favoritos */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-border flex items-center gap-2">
+          ❤️ Mis Favoritos
+        </h2>
+        {misFavoritos.length === 0 ? (
+          <p className="text-muted-foreground bg-muted p-4 rounded-lg">No tienes subastas guardadas en tus favoritos.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {misFavoritos.map((favorito: any) => {
+              const finalizada = new Date(favorito.fecha_fin).getTime() < Date.now();
+              return (
+                <div key={favorito.id} className="glass p-5 rounded-xl border border-border flex flex-col hover:border-red-500/50 transition-colors relative group">
+                  <div className="flex-1 mb-4">
+                    <h3 className="font-bold mb-1 truncate">{favorito.titulo}</h3>
+                    <p className={`text-sm font-semibold ${finalizada ? 'text-muted-foreground' : 'text-foreground'}`}>
+                      ${Number(favorito.precio_actual).toLocaleString("es-AR")}
+                    </p>
+                    {finalizada && <span className="text-xs text-red-500 mt-1 inline-block font-medium">FINALIZADA</span>}
+                  </div>
+                  <Link href={`/subastas/${favorito.id}`} className="text-sm text-center bg-background border border-border hover:border-red-500/50 hover:text-red-500 px-4 py-2 rounded-lg transition-colors w-full">
+                    Ver Subasta
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
     </div>

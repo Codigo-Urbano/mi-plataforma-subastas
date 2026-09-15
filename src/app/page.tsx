@@ -32,6 +32,10 @@ export default async function Home(
   }
 
   const { data: auctions, error } = await query;
+  
+  // Obtener favoritos del usuario si está logueado
+  const { obtenerIdsFavoritos } = await import("@/app/favoritos/actions");
+  const misFavoritos = await obtenerIdsFavoritos();
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -140,7 +144,12 @@ export default async function Home(
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {auctions.map((auction) => (
-              <SubastaCard key={auction.id} auction={auction} />
+              <SubastaCard 
+                key={auction.id} 
+                auction={auction} 
+                isFavorito={misFavoritos.includes(auction.id)}
+                currentPath="/"
+              />
             ))}
           </div>
         )}
