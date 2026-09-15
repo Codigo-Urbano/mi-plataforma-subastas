@@ -49,10 +49,6 @@ export default function ConsolaPuja({
       return null;
     },
     null
-  );
-
-  const [infoContacto, setInfoContacto] = useState<any>(null);
-
   // Lógica de cuenta regresiva
   useEffect(() => {
     const calcularTiempo = () => {
