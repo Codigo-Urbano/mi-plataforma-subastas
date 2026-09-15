@@ -127,7 +127,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                           <Link href={`/subastas/${sub.id}`} className="font-medium hover:text-primary transition-colors block mb-1">
                             {sub.titulo}
                           </Link>
-                          <span className="text-xs text-muted-foreground">Vendedor: @{sub.vendedor?.nickname || "Usuario"}</span>
+                          <span className="text-xs text-muted-foreground">Vendedor: @{(sub.vendedor as any)?.nickname || "Usuario"}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-sm font-medium bg-secondary/50 text-secondary-foreground px-3 py-1 rounded-full">
                           <Eye className="w-4 h-4" />
@@ -155,7 +155,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                       <li key={puja.id} className="p-4 hover:bg-white/5 transition-colors">
                         <div className="flex justify-between items-start mb-1">
                           <p className="text-sm">
-                            <span className="font-medium text-primary">@{puja.comprador?.nickname || "Alguien"}</span> pujó 
+                            <span className="font-medium text-primary">@{(puja.comprador as any)?.nickname || "Alguien"}</span> pujó 
                             <span className="font-bold ml-1">${puja.monto.toLocaleString("es-AR")}</span>
                           </p>
                           <span className="text-xs text-muted-foreground">
@@ -163,7 +163,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground truncate">
-                          En: {puja.subasta?.titulo}
+                          En: {(puja.subasta as any)?.titulo}
                         </p>
                       </li>
                     ))}
