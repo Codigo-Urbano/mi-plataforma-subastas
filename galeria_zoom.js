@@ -1,4 +1,6 @@
-"use client";
+
+const fs = require("fs");
+const content = `"use client";
 
 import { useState, useRef, MouseEvent } from "react";
 
@@ -16,18 +18,18 @@ export default function GaleriaImagenes({ imagenes }: { imagenes: string[] }) {
     );
   }
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e) => {
     if (!contenedorRef.current) return;
     
-    // Obtener dimensiones y posiciï¿½n del contenedor
+    // Obtener dimensiones y posición del contenedor
     const { left, top, width, height } = contenedorRef.current.getBoundingClientRect();
     
-    // Calcular posiciï¿½n del mouse relativa al contenedor en porcentaje (0 a 100%)
+    // Calcular posición del mouse relativa al contenedor en porcentaje (0 a 100%)
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
     
     setZoomStyle({
-      transformOrigin: `${x}% ${y}%`,
+      transformOrigin: \`\${x}% \${y}%\`,
       transform: "scale(2.5)"
     });
   };
@@ -73,18 +75,18 @@ export default function GaleriaImagenes({ imagenes }: { imagenes: string[] }) {
         />
       </div>
 
-      {/* Miniaturas (Solo si hay mï¿½s de 1) */}
+      {/* Miniaturas (Solo si hay más de 1) */}
       {imagenes.length > 1 && (
         <div className="flex gap-2 p-3 bg-background border-t border-border overflow-x-auto justify-center">
           {imagenes.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setActiva(idx)}
-              className={`relative h-16 w-16 md:h-20 md:w-20 rounded-md overflow-hidden flex-shrink-0 border-2 transition-all ${
+              className={\`relative h-16 w-16 md:h-20 md:w-20 rounded-md overflow-hidden flex-shrink-0 border-2 transition-all \${
                 activa === idx ? "border-primary scale-105 shadow-md opacity-100 ring-2 ring-primary/20" : "border-transparent opacity-50 hover:opacity-100 hover:scale-95"
-              }`}
+              }\`}
             >
-              <img src={img} alt={`Miniatura ${idx + 1}`} className="w-full h-full object-cover" />
+              <img src={img} alt={\`Miniatura \${idx + 1}\`} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
@@ -92,3 +94,6 @@ export default function GaleriaImagenes({ imagenes }: { imagenes: string[] }) {
     </div>
   );
 }
+`;
+fs.writeFileSync("src/app/subastas/[id]/GaleriaImagenes.tsx", content, "utf8");
+

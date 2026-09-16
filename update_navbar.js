@@ -1,4 +1,6 @@
-import Link from "next/link";
+
+const fs = require("fs");
+const content = `import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { Gavel } from "lucide-react";
 
@@ -25,7 +27,7 @@ export default async function Navbar() {
           <span>
             Tu cuenta ha sido <strong>suspendida</strong>. No puedes crear subastas ni realizar pujas.
             <Link href="/contacto" className="underline ml-2 hover:text-gray-200">
-              Contï¿½ctanos si crees que es un error.
+              Contáctanos si crees que es un error.
             </Link>
           </span>
         </div>
@@ -57,11 +59,11 @@ export default async function Navbar() {
                 )}
                 <Link
                   href="/vender"
-                  className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${
+                  className={\`text-sm font-medium px-4 py-2 rounded-md transition-colors \${
                     isSuspendido 
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none" 
                       : "bg-white text-black hover:bg-gray-200"
-                  }`}
+                  }\`}
                   aria-disabled={isSuspendido}
                   tabIndex={isSuspendido ? -1 : undefined}
                 >
@@ -75,7 +77,7 @@ export default async function Navbar() {
                 </Link>
                 <form action="/auth/signout" method="post">
                   <button className="text-sm font-medium hover:text-red-500 transition-colors">
-                    Cerrar Sesiï¿½n
+                    Cerrar Sesión
                   </button>
                 </form>
               </div>
@@ -84,7 +86,7 @@ export default async function Navbar() {
                 href="/login"
                 className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
               >
-                Iniciar Sesiï¿½n
+                Iniciar Sesión
               </Link>
             )}
           </div>
@@ -93,3 +95,6 @@ export default async function Navbar() {
     </header>
   );
 }
+`;
+fs.writeFileSync("src/components/Navbar.tsx", content, "utf8");
+
