@@ -7,6 +7,7 @@ import Estrellas from "@/components/Estrellas";
 import BotonCompartir from "@/components/BotonCompartir";
 import BotonFavorito from "@/components/BotonFavorito";
 import GaleriaImagenes from "./GaleriaImagenes";
+import PanelSeguimiento from "./PanelSeguimiento";
 import PreguntasRespuestas from "./PreguntasRespuestas";
 import TrackerVista from "./TrackerVista";
 import { obtenerPromedioCalificacion } from "./actions";

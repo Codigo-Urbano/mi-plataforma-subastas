@@ -107,7 +107,10 @@ export async function GET(request: Request) {
 
       await supabase
         .from("subastas")
-        .update({ estado: "finalizada" })
+        .update({
+          estado: "finalizada",
+          post_estado: pujaGanadora ? "pendiente_pago" : null
+        })
         .eq("id", subasta.id);
     }
 
