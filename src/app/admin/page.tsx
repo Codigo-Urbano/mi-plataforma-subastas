@@ -3,14 +3,16 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { 
-  BarChart3, DollarSign, Gavel, Users, TrendingUp, Eye, Clock, CheckCircle2, ShieldAlert
+  BarChart3, DollarSign, Gavel, Users, TrendingUp, Eye, Clock, CheckCircle2, ShieldAlert, BadgeCheck
 } from "lucide-react";
 import BotonEstadoUsuario from "./BotonEstadoUsuario";
 import ModalHistorialAdmin from "./ModalHistorialAdmin";
 import FormularioComisiones from "./FormularioComisiones";
+import PanelKYC from "./PanelKYC";
 import { 
   obtenerTodosUsuarios, 
-  obtenerConfiguracion 
+  obtenerConfiguracion,
+  obtenerSolicitudesKYC
 } from "./actions";
 
 export default async function AdminDashboardPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
@@ -54,6 +56,10 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
   // SECCIÓN 2: GESTIÓN DE USUARIOS
   const usuarios = tab === "usuarios" ? await obtenerTodosUsuarios() : [];
 
+  // SECCIÓN 3: KYC
+  const solicitudesKYC = tab === "kyc" ? await obtenerSolicitudesKYC() : [];
+  const solicitudesCount = tab !== "kyc" ? (await supabase.from("perfiles").select("*", { count: "exact", head: true }).eq("kyc_status", "en_revision")).count || 0 : solicitudesKYC.length;
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <div className="flex justify-between items-end mb-8">
@@ -69,6 +75,12 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
       <div className="flex gap-2 mb-8 border-b border-border/50 pb-2 overflow-x-auto">
         <Link href="/admin?tab=metricas" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'metricas' ? 'bg-primary text-primary-foreground' : 'hover:bg-white/5 text-muted-foreground'}`}>Métricas y Analíticas</Link>
         <Link href="/admin?tab=usuarios" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'usuarios' ? 'bg-primary text-primary-foreground' : 'hover:bg-white/5 text-muted-foreground'}`}>Gestión de Usuarios</Link>
+        <Link href="/admin?tab=kyc" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${tab === 'kyc' ? 'bg-primary text-primary-foreground' : 'hover:bg-white/5 text-muted-foreground'}`}>
+          Verificación de Identidad
+          {solicitudesCount > 0 && (
+            <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{solicitudesCount}</span>
+          )}
+        </Link>
         <Link href="/admin?tab=comisiones" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'comisiones' ? 'bg-primary text-primary-foreground' : 'hover:bg-white/5 text-muted-foreground'}`}>Configuración de Comisiones</Link>
       </div>
 
@@ -194,7 +206,12 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                 {usuarios.map((u: any) => (
                   <tr key={u.id} className="border-b border-border/30 hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-foreground mb-1">{u.nombre_completo || "Sin Nombre"}</div>
+                      <div className="font-medium text-foreground mb-1 flex items-center gap-1.5">
+                        {u.nombre_completo || "Sin Nombre"}
+                        {u.kyc_status === 'aprobado' && (
+                          <BadgeCheck className="w-4 h-4 text-primary" />
+                        )}
+                      </div>
                       <div className="text-muted-foreground text-xs">{u.email}</div>
                       {u.rol === "admin" && <span className="inline-block mt-1 text-[10px] font-bold text-primary uppercase">Admin</span>}
                     </td>
@@ -226,6 +243,11 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
             </table>
           </div>
         </div>
+      )}
+
+      {/* CONTENIDO TAB: KYC */}
+      {tab === "kyc" && (
+        <PanelKYC solicitudes={solicitudesKYC} />
       )}
 
       {/* CONTENIDO TAB: COMISIONES */}

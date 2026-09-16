@@ -1,6 +1,8 @@
+import { ShieldAlert } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import FormularioKYC from "./FormularioKYC";
 import Estrellas from "@/components/Estrellas";
 import { obtenerPromedioCalificacion } from "../subastas/[id]/actions";
 
@@ -184,8 +186,23 @@ export default async function MiCuentaPage() {
             })}
           </div>
         )}
-      </div>
 
+        {/* Verificaci�n de Identidad (KYC) */}
+        <div className="md:col-span-3 glass p-6 rounded-2xl border border-border/50">
+          <div className="flex items-center gap-3 mb-6 border-b border-border/50 pb-4">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <ShieldAlert className="text-primary w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Verificaci�n de Identidad</h2>
+              <p className="text-sm text-muted-foreground">Obt�n la insignia de usuario verificado.</p>
+            </div>
+          </div>
+          
+          <FormularioKYC kycStatus={perfil?.kyc_status} />
+        </div>
+
+      </div>
     </div>
   );
 }
