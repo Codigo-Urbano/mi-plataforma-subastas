@@ -139,7 +139,10 @@ export default async function SubastaDetallePage({
           </div>
 
           {/* Consola de Puja en Tiempo Real */}
-          <ConsolaPuja
+          
+
+
+            <ConsolaPuja
             subastaId={auction.id}
             initialPrecioActual={auction.precio_actual}
             initialFechaFin={auction.fecha_fin}
