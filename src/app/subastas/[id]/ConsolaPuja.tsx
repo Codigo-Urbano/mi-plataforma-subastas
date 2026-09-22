@@ -12,6 +12,7 @@ type ConsolaPujaProps = {
   initialFechaFin: string;
   isOwner: boolean;
   isLoggedIn: boolean;
+  precioBase: number;
 };
 
 export default function ConsolaPuja({
@@ -20,6 +21,7 @@ export default function ConsolaPuja({
   initialFechaFin,
   isOwner,
   isLoggedIn,
+  precioBase,
 }: ConsolaPujaProps) {
   const [precioActual, setPrecioActual] = useState(initialPrecioActual);
   const [fechaFin, setFechaFin] = useState(initialFechaFin);
@@ -124,7 +126,16 @@ export default function ConsolaPuja({
     };
   }, [supabase, subastaId]);
 
-  const minPuja = Number(precioActual) + 1;
+  // Lógica de Incrementos Dinámicos (Proxy Bidding)
+  const getMinIncrement = (current: number) => {
+    if (current < 10000) return 500;
+    if (current < 50000) return 1000;
+    if (current < 200000) return 2500;
+    if (current < 1000000) return 10000;
+    return 25000;
+  };
+  
+  const minRequiredTope = precioActual === precioBase ? precioBase : precioActual + getMinIncrement(precioActual);
 
   return (
     <>
@@ -156,36 +167,43 @@ export default function ConsolaPuja({
             ) : (
               <form action={formAction} className="space-y-4">
                 <div>
-                  <label htmlFor="monto" className="block text-sm mb-2 text-muted-foreground">
-                    Tu oferta (mínimo ${minPuja.toLocaleString("es-AR")})
-                  </label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        $
-                      </span>
-                      <input
-                        type="number"
-                        id="monto"
-                        name="monto"
-                        required
-                        className="w-full pl-8 pr-4 py-3 bg-background/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 font-bold"
-                        placeholder={minPuja.toString()}
-                        min={minPuja}
-                        step="0.01"
-                      />
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">
+                          $
+                        </span>
+                        <input
+                          type="number"
+                          id="monto"
+                          name="monto"
+                          required
+                          className="w-full pl-8 pr-4 py-3 bg-secondary/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 font-bold"
+                          placeholder={`Ej. ${(minRequiredTope + getMinIncrement(minRequiredTope)).toLocaleString("es-AR")}`}
+                          min={minRequiredTope}
+                          step="1"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-white text-black font-bold px-8 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[120px] whitespace-nowrap"
+                      >
+                        {isPending ? (
+                          <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                        ) : (
+                          "Fijar Tope"
+                        )}
+                      </button>
                     </div>
-                    <button
-                      type="submit"
-                      disabled={isPending}
-                      className="bg-white text-black font-bold px-8 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[100px]"
-                    >
-                      {isPending ? (
-                        <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                      ) : (
-                        "Pujar"
-                      )}
-                    </button>
+                    
+                    <div className="text-xs text-muted-foreground/80 mt-1 px-1">
+                      Ingresa el <strong>monto máximo</strong> que estás dispuesto a pagar. El sistema pujará por ti automáticamente en incrementos de ${getMinIncrement(precioActual).toLocaleString("es-AR")} solo si alguien intenta superarte. <strong className="text-primary/70">Tu tope es 100% secreto.</strong>
+                    </div>
+                    <div className="text-xs font-medium mt-1 px-1 text-yellow-600/90 dark:text-yellow-400/80">
+                      Mínimo aceptado por el sistema: ${minRequiredTope.toLocaleString("es-AR")}
+                    </div>
+                    
                   </div>
                   {error && (
                     <p className="text-red-500 text-sm mt-2">{error}</p>

@@ -1,4 +1,4 @@
-﻿
+
 "use client";
 
 import { useState } from "react";
@@ -53,7 +53,7 @@ export default function ModalHistorialAdmin({ usuarioId, nombre }: { usuarioId: 
                           {item.accion}
                         </strong>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(item.creado_en).toLocaleString("es-AR")}
+                          {new Date(item.creada_en).toLocaleString("es-AR")}
                         </span>
                       </div>
                       <p className="text-muted-foreground">"{item.razon}"</p>

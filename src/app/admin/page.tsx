@@ -49,8 +49,8 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
 
   const { data: pujasRecientes } = await supabase
     .from("pujas")
-    .select(`id, monto, creado_en, subasta:subastas(titulo), comprador:perfiles!pujas_comprador_id_fkey(nickname)`)
-    .order("creado_en", { ascending: false })
+    .select(`id, monto, creada_en, subasta:subastas(titulo), comprador:perfiles!pujas_comprador_id_fkey(nickname)`)
+    .order("creada_en", { ascending: false })
     .limit(5);
 
   // SECCIÓN 2: GESTIÓN DE USUARIOS
@@ -171,7 +171,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
                             <span className="font-bold ml-1">${puja.monto.toLocaleString("es-AR")}</span>
                           </p>
                           <span className="text-xs text-muted-foreground">
-                            {new Date(puja.creado_en).toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})}
+                            {new Date(puja.creada_en).toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})}
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground truncate">

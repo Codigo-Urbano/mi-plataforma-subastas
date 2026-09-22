@@ -83,7 +83,7 @@ BEGIN
     LEFT JOIN public.ofertas_automaticas oa 
       ON p.comprador_id = oa.comprador_id AND p.subasta_id = oa.subasta_id
     WHERE p.subasta_id = p_subasta_id
-    ORDER BY p.monto DESC, p.creado_en ASC
+    ORDER BY p.monto DESC, p.creada_en ASC
     LIMIT 1;
 
     v_incremento := public.calcular_incremento(v_subasta.precio_actual);

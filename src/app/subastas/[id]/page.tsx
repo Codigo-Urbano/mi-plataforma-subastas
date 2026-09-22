@@ -148,6 +148,7 @@ export default async function SubastaDetallePage({
             initialFechaFin={auction.fecha_fin}
             isOwner={isOwner}
             isLoggedIn={!!user}
+            precioBase={auction.precio_base}
           />
 
           {/* Detalles Técnicos */}
